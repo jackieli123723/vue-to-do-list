@@ -1,14 +1,54 @@
-<!-- index.html -->
-<!doctype html>
-<html>
+<template>
+  <div id="app" class="reminder-container" v-cloak>
+    <img class="logo" src="./assets/logo.png">
+    <h1 v-text="title"></h1>
+	<br/>
+	<input type="text" v-model="newItem"  v-on:keyup.enter="addNew" placeholder="enter输入" />
+    <ul class="reminders">
+      <li v-for="item in items" v-bind:class="{isFinshed:item.isFinshed}" v-on:click="toggleFinshed(item)">
+        {{ item.label }} <span class="fr">{{item.isFinshed ? "完成" : "未完成" }}</span>
+      </li>
+    </ul>
+</div>
 
-<head>
-    <meta charset="utf-8">
-    <title>VueJs Components Tutorial - coligo.io</title>
-</head>
+</template>
 
-<body>
-
+<script>
+import Store from './components/store'
+export default {
+  data () {
+    return {
+      items: Store.fetch(),
+      newItem: '',
+      title: '添加自己的工作计划(vue.js)'
+    }
+  },
+  watch: {
+    items: {
+      handler (items) {
+        Store.save(items)
+      },
+      deep: true
+    }
+  },
+  methods: {
+    addNew () {
+      if (this.newItem === '') {
+        window.alert('不能为空')
+        return
+      }
+      this.items.push({
+        label: this.newItem,
+        isFinshed: false
+      })
+      this.newItem = ''
+    },
+    toggleFinshed (item) {
+      item.isFinshed = !item.isFinshed
+    }
+  }
+}
+</script>
 
 <style>
 *{
@@ -113,74 +153,13 @@ text-decoration:line-through;
  margin:0 auto;
  display:block;
 }
+
+	[v-cloak]{
+		display: none;
+	}
+
+.logo {
+  width: 100px;
+  height: 100px
+}
 </style>
-<div id="demo" class="reminder-container">
-    <h1 v-text="title"></h1>
-	<br/>
-	<input type="text" v-model="newItem"  v-on:keyup.enter="newAdd" placeholder="enter输入" />
-    <ul class="reminders">
-      <li v-for="item in items" v-bind:class="{isFinshed:item.isFinshed}" v-on:click="toggleFinshed(item)">
-        {{ item.label }} <span class="fr">{{item.isFinshed ? "完成" : "未完成" }}</span>
-      </li>
-    </ul>
-	
-</div>
-
-    <script src="js/vue.js"></script>
-	<script>
-	var KEY = "workPlan";
-	var Store = {
-		fetch: function() {
-				return JSON.parse(localStorage.getItem(KEY) || '[]');//返回一个js对象
-			},
-		//将传入的data对象存下
-		save: function(data) {
-			localStorage.setItem(KEY, JSON.stringify(data));
-		}
-	};
-	</script>
-    <script>
-	var vm=new Vue({
-	 el:'#demo',
-	 data: {
-		title:"添加自己的工作计划(vue.js)",
-		newItem:'',
-		items:[
-			{ label: 'web前端', isFinshed: true },
-			{ label: 'Bar', isFinshed: false },
-			{ label: 'Foo', isFinshed: false },
-			{ label: 'Bar', isFinshed: true }
-		  ],
-		items: [],
-        items: Store.fetch()		
-	 },
-	 
-	 watch: {
-		items: {
-			handler: function (items) {
-			Store.save(items);
-			},
-			deep: true
-		}	
-	 },
-	 
-	  methods: {
-		toggleFinshed: function (item) {
-		 item.isFinshed = !item.isFinshed
-		},
-		newAdd: function () {
-		 //console.log(this.newItem);
-		 this.items.push({
-		    label:this.newItem,
-			isFinshed:false
-		 })
-		 this.newItem = '';
-		 
-		}
-	  }
-
-	})
-	</script>
-</body>
-
-</html>

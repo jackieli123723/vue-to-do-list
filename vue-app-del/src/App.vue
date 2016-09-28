@@ -1,0 +1,310 @@
+<template>
+  <div id='app' class="reminder-container" v-cloak>
+    <img class="logo" src="logo.png">
+    <h1 v-text="title"></h1>
+	  <br/>
+    <input id='add-input' type="text" v-model='newItem' @keyup.enter='addNew' placeholder='enter输入'/>
+    <ul class="reminders">
+        <li v-for='item in items'>
+            <h3 @mouseenter='itemEnter(item)' @mouseleave='itemLeave(item)'>
+              <!-- <input type='checkbox' @click='itemCheck(item)'> -->
+              <div class="box"  v-bind:class="{ 'checked': item.checked }" @click="chooseCheck(item)">
+                <i class="checkbox-icon"></i>
+              </div>
+              <p class='item-label' v-bind:class="{ 'line-through': item.checked }">{{ $index + 1 }}.{{ item.label }} </p>
+              <p class='item-status done' v-if='item.checked'>已完成</p>
+              <p class="item-status " v-else>未完成</p>
+              <p class='item-delete' v-if='item.showDelete' @click='deleteClick(item)'>&#215;</p>
+            </h3>
+        </li>
+    </ul>
+    <div class="events clearfix">
+      <span class="fl">待办事项<strong class="hope">{{hopeResult()}}</strong></span>
+      <span class="fl">完成事项<strong class="done">{{done.length}}</strong></span>
+      <span class="fr">总共事项<strong class="total">{{items.length}}</strong></span>
+    </div>
+
+  </div>
+</template>
+
+<script>
+import Store from './store'
+export default {
+  data () {
+    return {
+      items: Store.fetch(),
+      newItem: '',
+      title: '添加自己的工作计划(vue.js)',
+      done: [],
+      hope: [],
+      sum: 0
+    }
+  },
+  watch: {
+    items: {
+      handler (items) {
+        Store.save(items)
+      },
+      deep: true
+    }
+  },
+  methods: {
+    addNew () {
+      if (this.newItem === '') {
+        window.alert('不能为空')
+        return
+      }
+      this.items.push({
+        label: this.newItem,
+        checked: false,
+        showDelete: false
+      })
+      this.newItem = ''
+    },
+    itemEnter (item) {
+      item.showDelete = true
+    },
+    itemLeave (item) {
+      item.showDelete = false
+    },
+    deleteClick (item) {
+      this.items.$remove(item)
+    },
+    chooseCheck (item) {
+      item.checked = !item.checked
+    },
+    add (item) {
+      if (item['checked']) {
+        this.sum++
+      }
+      return this.sum
+    },
+    hopeResult () {
+      this.items.forEach(item => console.log(item['checked']))
+    }
+  }
+}
+</script>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  -moz-box-sizing: border-box;
+   -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.2)
+}
+
+:-moz-placeholder {
+  color: rgba(255, 255, 255, 0.2)
+}
+
+::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.2)
+}
+
+:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.2)
+}
+
+ol,ul,li{list-style:none;}
+img{border:0 none;}
+a,input,textarea{outline:none;}
+.clearfix{*zoom:1;}
+.clearfix:after{clear:both;content:'';display:block;height:0;visibility:hidden;}
+.fr{float:left;}
+.fr{float:right}
+
+body {
+  background-color: #16a085;
+  font-family: "Lato", sans-serif;
+  height: 2000px;
+  color: white
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  height: 30px;
+
+}
+
+#add-input{
+  margin: 0 auto;
+  display: block
+}
+.item-status {
+  display: inline;
+  background: red;
+  color: white;
+  padding:  2px;
+  font-size: 12px;
+
+}
+.item-status.done{
+  background: green;
+  color: #fff;
+}
+.item-delete {
+  display: inline;
+
+  font-size: 20px;
+  color: gray;
+  cursor: pointer;
+  position: absolute;
+  top:8px;
+  right: 4px;
+}
+.item-label {
+  display: inline;
+    color: #444;
+     font-size: 20px;
+}
+.line-through {
+  text-decoration: line-through;
+  color: green;
+}
+
+.logo{
+  width: 100px;
+  height: 100px;
+}
+
+.reminders {
+  list-style-type: none;
+  max-width: 500px;
+  margin: 30px auto
+}
+
+input[type='text'] {
+  width: 430px;
+  height: 50px;
+  border: none;
+  background-color: transparent;
+  font-size: 20px;
+  font-weight:300;
+  color: white;
+  padding:5px 10px;
+  -webkit-transition: all .3s ease;
+  -o-transition: all .3s ease;
+  transition: all .3s ease;
+  background-color: rgba(0,0,0,.15);
+}
+
+.reminders {
+  list-style-type: none;
+  max-width: 430px;
+  margin: 30px auto
+}
+
+.reminders li {
+  z-index:1;
+  font-weight: 400;
+  /*box-shadow: 0 7px 0 -4px rgba(0, 0, 0, 0.2);*/
+  color: #444;
+  text-align: left;
+  min-height: 50px;
+  line-height: 30px;
+  font-size: 20px;
+  background-color: white;
+  margin-bottom: 10px;
+  padding: 10px;
+  position: relative;
+
+  word-wrap: break-word;
+  -webkit-transition: all .1s ease;
+  -o-transition: all .1s ease;
+  transition: all .1s ease
+}
+.reminders li:focus {
+  outline: none;
+}
+
+.reminders li.isFinshed{
+text-decoration:line-through;
+    color: green;
+}
+
+.reminder-container h1{
+ text-align:center;
+ margin:50px auto 20px;
+}
+
+.reminder-container h3{
+ font-weight: normal;
+   padding-left: 30px;
+
+}
+
+.box{
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  left: 10px;
+  top:10px;
+}
+
+.checkbox-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    border-radius: 2px;
+    border: 1px solid #16a085;
+	}
+.checkbox-icon:after{
+  content: '';
+}
+
+.box.checked .checkbox-icon{
+	  display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    border-radius: 2px;
+    border: 1px solid #16a085;
+}
+.box.checked .checkbox-icon:after{
+	content: '';
+    display: block;
+    width: 9px;
+    height: 5px;
+    border-bottom: 2px solid #16a085;
+    border-left: 2px solid #16a085;
+    margin: 3px 0 0 3px;
+    -webkit-transform: rotate(-45deg) skew(0deg,-12deg);
+    -moz-transform: rotate(-45deg) skew(0deg,-12deg);
+    -ms-transform: rotate(-45deg) skew(0deg,-12deg);
+    -o-transform: rotate(-45deg) skew(0deg,-12deg);
+    transform: rotate(-45deg) skew(0deg,-12deg)
+}
+
+.events{
+  width: 430px;
+  height: 30px;
+  line-height: 30px;
+
+  margin: 0 auto;
+}
+
+.hope{
+  color: red;
+}
+.done{
+  color: green;
+
+}
+.total{
+  color: #fff;
+}
+	[v-cloak]{
+		display: none;
+	}
+
+
+</style>
