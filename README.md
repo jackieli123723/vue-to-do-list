@@ -4,6 +4,12 @@ vue-to-do-list vue.js work plan
 
 ##演示地址
 
-[vue](http://lilidong/demo/vue).
-[vue-app](http://lilidong/demo/vue-app).
-[vue-app-del](http://lilidong/demo/vue-app-del).
+
+##原生
+[vue](http://www.lilidong.cn/demo/vue/).
+
+##webpack
+[vue-app](http://www.lilidong.cn/demo/vue-app/).
+
+##webpack +删除
+[vue-app-del](http://www.lilidong.cn/demo/vue-app-del/).
