@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="bt">
-        <div class="box" v-bind:class="{ 'checked': changecheck }" @click="change()">
+        <div class="box" v-bind:class="{ 'checked': changecheck }" @click="change()" >
             <i class="checkbox-icon"></i>
         </div>
         <span class="all">{{!changecheck ? "全选" : "反选" }}</span>
@@ -51,7 +51,6 @@
         <span class="fl">完成事项<strong class="done">{{doneResult()}}</strong></span>
         <span class="fr">总共事项<strong class="total">{{items.length}}</strong></span>
     </div>
-
 </div>
 
 </template>
@@ -74,6 +73,14 @@ export default {
       changecheck: false
     }
   },
+  // watch: {
+  //   items: {
+  //     handler (val, oldval) {
+  //       Store.save(val)
+  //     },
+  //     deep: true
+  //   }
+  // },
   watch: {
     items: {
       handler (items) {
@@ -104,7 +111,6 @@ export default {
     deleteClick (index) {
       this.show = false
       this.items.splice(index, 1)
-      // this.$el.items.remove(item)
     },
     chooseCheck (item) {
       item.checked = !item.checked
@@ -128,10 +134,17 @@ export default {
     change () {
       if (!this.changecheck) {
         this.changecheck = true
+        this.items.forEach((item) => item['checked'] = true )
+        // this.items.forEach(function(item){
+        //   item.checked = true
+        // })
       } else {
         this.changecheck = false
+        this.items.forEach((item) => item['checked'] = false )
+        // this.items.forEach(function(item){
+        //   item.checked = false
+        // })
       }
-      this.items.forEach((item) => item['checked'] ? !item.checked : item.checked)
     }
   }
 
